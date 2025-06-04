@@ -1,161 +1,183 @@
 body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: linear-gradient(120deg, #66af87 0%, #b888d8 100%);
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
-    }
-    .container {
-      background: #fff;
-      margin-top: 50px;
-      padding: 30px 25px 20px 25px;
-      border-radius: 16px;
-      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
-      width: 100%;
-      max-width: 430px;
-    }
-    h1 {
-      text-align: center;
-      color: #4b2e5c;
-      margin-bottom: 24px;
-      letter-spacing: 1px;
-    }
-    .task-controls,
-    .filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 18px;
-      justify-content: center;
-    }
-    .task-controls input[type="text"],
-    .task-controls input[type="date"],
-    .task-controls select {
-      flex: 1 1 120px;
-      padding: 9px 10px;
-      border-radius: 6px;
-      border: 1px solid #b888d8;
-      font-size: 15px;
-      margin-bottom: 0;
-    }
-    .filters input[type="text"],
-    .filters input[type="date"],
-    .filters select {
-      padding: 7px 8px;
-      border-radius: 5px;
-      border: 1px solid #b888d8;
-      font-size: 14px;
-    }
-    button {
-      padding: 9px 15px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 15px;
-      transition: background 0.2s, color 0.2s;
-    }
-    button.add {
-      background-color: #28a745;
-      color: white;
-      font-weight: bold;
-    }
-    button.add:hover {
-      background-color: #218838;
-    }
-    button.edit {
-      background-color: #ffc107;
-      color: #4b2e5c;
-    }
-    button.edit:hover {
-      background-color: #e0a800;
-    }
-    button.delete {
-      background-color: #dc3545;
-      color: white;
-    }
-    button.delete:hover {
-      background-color: #b52a37;
-    }
-    button:active {
-      transform: scale(0.97);
-    }
-    .filters label {
-      font-weight: 500;
-      color: #4b2e5c;
-      align-self: center;
-    }
-    #taskList {
-      margin-top: 10px;
-    }
-    .task {
-      background: #f7f3fa;
-      padding: 13px 10px;
-      border-radius: 7px;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 1px 4px rgba(188, 136, 216, 0.08);
-      transition: background 0.2s;
-    }
-    .task:hover {
-      background: #ece0f6;
-    }
-    .task input[type="checkbox"] {
-      margin-right: 10px;
-      accent-color: #b888d8;
-      width: 18px;
-      height: 18px;
-    }
-    .task-text {
-      flex: 1 1 auto;
-      font-size: 16px;
-      color: #4b2e5c;
-      font-weight: 500;
-    }
-    .due-date {
-      font-size: 13px;
-      color: #7d5fa7;
-      margin-left: 8px;
-    }
-    .priority {
-      font-size: 13px;
-      margin-left: 8px;
-      font-weight: bold;
-    }
-    .priority.low {
-      color: #2e7d32;
-    }
-    .priority.medium {
-      color: #ff9800;
-    }
-    .priority.high {
-      color: #d32f2f;
-    }
-    .task.completed .task-text {
-      text-decoration: line-through;
-      color: #aaa;
-    }
-    .task.completed .due-date,
-    .task.completed .priority {
-      color: #bdbdbd;
-    }
-    @media (max-width: 600px) {
-      .container {
-        padding: 10px 2vw;
-        max-width: 98vw;
-      }
-      .task-controls,
-      .filters {
-        flex-direction: column;
-        gap: 8px;
-      }
-    }
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(120deg, #66af87 0%, #b888d8 100%);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
 
-    .overview {
+.container {
+  background: #fff;
+  margin-top: 50px;
+  padding: 30px 25px 20px 25px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+  width: 100%;
+  max-width: 430px;
+}
+
+h1 {
+  text-align: center;
+  color: #4b2e5c;
+  margin-bottom: 24px;
+  letter-spacing: 1px;
+}
+
+.task-controls,
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+  justify-content: center;
+}
+
+.task-controls input[type="text"],
+.task-controls input[type="date"],
+.task-controls select {
+  flex: 1 1 120px;
+  padding: 9px 10px;
+  border-radius: 6px;
+  border: 1px solid #b888d8;
+  font-size: 15px;
+  margin-bottom: 0;
+}
+
+.filters input[type="text"],
+.filters input[type="date"],
+.filters select {
+  padding: 7px 8px;
+  border-radius: 5px;
+  border: 1px solid #b888d8;
+  font-size: 14px;
+}
+
+button {
+  padding: 9px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.2s, color 0.2s;
+}
+
+button.add {
+  background-color: #28a745;
+  color: white;
+  font-weight: bold;
+}
+button.add:hover {
+  background-color: #218838;
+}
+
+button.edit {
+  background-color: #ffc107;
+  color: #4b2e5c;
+}
+button.edit:hover {
+  background-color: #e0a800;
+}
+
+button.delete {
+  background-color: #dc3545;
+  color: white;
+}
+button.delete:hover {
+  background-color: #b52a37;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+.filters label {
+  font-weight: 500;
+  color: #4b2e5c;
+  align-self: center;
+}
+
+#taskList {
+  margin-top: 10px;
+}
+
+.task {
+  background: #f7f3fa;
+  padding: 13px 10px;
+  border-radius: 7px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 1px 4px rgba(188, 136, 216, 0.08);
+  transition: background 0.2s;
+}
+
+.task:hover {
+  background: #ece0f6;
+}
+
+.task input[type="checkbox"] {
+  margin-right: 10px;
+  accent-color: #b888d8;
+  width: 18px;
+  height: 18px;
+}
+
+.task-text {
+  flex: 1 1 auto;
+  font-size: 16px;
+  color: #4b2e5c;
+  font-weight: 500;
+}
+
+.due-date {
+  font-size: 13px;
+  color: #7d5fa7;
+  margin-left: 8px;
+}
+
+.priority {
+  font-size: 13px;
+  margin-left: 8px;
+  font-weight: bold;
+}
+.priority.low {
+  color: #2e7d32;
+}
+.priority.medium {
+  color: #ff9800;
+}
+.priority.high {
+  color: #d32f2f;
+}
+
+.task.completed .task-text {
+  text-decoration: line-through;
+  color: #aaa;
+}
+
+.task.completed .due-date,
+.task.completed .priority {
+  color: #bdbdbd;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 10px 2vw;
+    max-width: 98vw;
+  }
+  .task-controls,
+  .filters {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+/* Add to styles.css */
+.overview {
   background: #f7f3fa;
   border-radius: 7px;
   padding: 10px 12px;

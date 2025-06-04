@@ -53,9 +53,9 @@
       const pending = tasks.filter(t => !t.completed).length;
       overview.innerHTML = `
         <span style="color:#4b2e5c;font-weight:500;">Total:</span> ${total}
-        <span style="color:#28a745;font-weight:500;margin-left:15px;">Pending:</span> ${pending}
-        <span style="color:#ff9800;font-weight:500;margin-left:15px;">Active:</span> ${pending}
-        <span style="color:#b52a37;font-weight:500;margin-left:15px;">Completed:</span> ${completed}
+        <span style="color:#28a745;font-weight:500;">Pending:</span> ${pending}
+        <span style="color:#ff9800;font-weight:500;">Active:</span> ${pending}
+        <span style="color:#b52a37;font-weight:500;">Completed:</span> ${completed}
       `;
     }
 
