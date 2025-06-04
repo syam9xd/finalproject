@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,38 +9,119 @@
 <body>
   <div class="container">
     <h1>Task Manager</h1>
-    <input type="text" id="taskInput" placeholder="Enter a new task..." />
-    <button class="add" onclick="addTask()">Add Task</button>
+    <div id="overview" class="overview"></div>
+    <div class="task-controls">
+      <input type="text" id="taskInput" placeholder="Enter a new task..." />
+      <input type="date" id="dueDateInput" />
+      <select id="priorityInput">
+        <option value="Low">Low</option>
+        <option value="Medium" selected>Medium</option>
+        <option value="High">High</option>
+      </select>
+      <button class="add" onclick="addTask()">Add Task</button>
+    </div>
+    <div class="filters">
+      <label for="searchInput" style="margin-right:5px;">🔍 Search:</label>
+      <input type="text" id="searchInput" placeholder="Type to search..." oninput="renderTasks()" style="margin-right:5px;" />
+      <button onclick="clearSearch()" style="margin-right:15px;">Clear</button>
+      <select id="statusFilter" onchange="renderTasks()">
+        <option value="">All</option>
+        <option value="active">Active</option>
+        <option value="completed">Completed</option>
+      </select>
+      <select id="priorityFilter" onchange="renderTasks()">
+        <option value="">All Priorities</option>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+      <input type="date" id="dateFilter" onchange="renderTasks()" />
+    </div>
     <div id="taskList"></div>
-  </div>  <script>
+  </div>
+  <script>
     let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
     function saveTasks() {
       localStorage.setItem('tasks', JSON.stringify(tasks));
     }
 
+    function renderOverview() {
+      const overview = document.getElementById('overview');
+      const total = tasks.length;
+      const completed = tasks.filter(t => t.completed).length;
+      const pending = tasks.filter(t => !t.completed).length;
+      overview.innerHTML = `
+        <span style="color:#4b2e5c;font-weight:500;">Total:</span> ${total}
+        <span style="color:#28a745;font-weight:500;margin-left:15px;">Pending:</span> ${pending}
+        <span style="color:#ff9800;font-weight:500;margin-left:15px;">Active:</span> ${pending}
+        <span style="color:#b52a37;font-weight:500;margin-left:15px;">Completed:</span> ${completed}
+      `;
+    }
+
     function renderTasks() {
+      renderOverview();
       const taskList = document.getElementById('taskList');
       taskList.innerHTML = '';
-      tasks.forEach((task, index) => {
+
+      // Filters
+      const status = document.getElementById('statusFilter').value;
+      const priority = document.getElementById('priorityFilter').value;
+      const date = document.getElementById('dateFilter').value;
+      const search = document.getElementById('searchInput').value.trim().toLowerCase();
+
+      let filtered = tasks.filter(task => {
+        if (status === 'active' && task.completed) return false;
+        if (status === 'completed' && !task.completed) return false;
+        if (priority && task.priority !== priority) return false;
+        if (date && task.dueDate !== date) return false;
+        if (search && !task.text.toLowerCase().includes(search)) return false;
+        return true;
+      });
+
+      filtered.forEach((task, index) => {
         const taskDiv = document.createElement('div');
         taskDiv.className = 'task' + (task.completed ? ' completed' : '');
+
+        // Checkbox for complete/incomplete
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = task.completed;
+        checkbox.onclick = () => toggleComplete(index);
+        taskDiv.appendChild(checkbox);
+
+        // Task text
         const taskText = document.createElement('span');
         taskText.textContent = task.text;
-        taskText.onclick = () => toggleComplete(index);
+        taskText.className = 'task-text';
+        taskDiv.appendChild(taskText);
 
+        // Due date
+        if (task.dueDate) {
+          const due = document.createElement('span');
+          due.className = 'due-date';
+          due.textContent = ' | Due: ' + task.dueDate;
+          taskDiv.appendChild(due);
+        }
+
+        // Priority
+        const prio = document.createElement('span');
+        prio.className = 'priority ' + (task.priority || 'Medium').toLowerCase();
+        prio.textContent = ' | Priority: ' + (task.priority || 'Medium');
+        taskDiv.appendChild(prio);
+
+        // Edit button
         const editBtn = document.createElement('button');
         editBtn.textContent = 'Edit';
         editBtn.className = 'edit';
         editBtn.onclick = () => editTask(index);
+        taskDiv.appendChild(editBtn);
 
+        // Delete button
         const deleteBtn = document.createElement('button');
         deleteBtn.textContent = 'Delete';
         deleteBtn.className = 'delete';
         deleteBtn.onclick = () => deleteTask(index);
-
-        taskDiv.appendChild(taskText);
-        taskDiv.appendChild(editBtn);
         taskDiv.appendChild(deleteBtn);
 
         taskList.appendChild(taskDiv);
@@ -48,12 +130,16 @@
 
     function addTask() {
       const input = document.getElementById('taskInput');
+      const dueDate = document.getElementById('dueDateInput').value;
+      const priority = document.getElementById('priorityInput').value;
       const text = input.value.trim();
       if (text !== '') {
-        tasks.push({ text, completed: false });
+        tasks.push({ text, completed: false, dueDate, priority });
         saveTasks();
         renderTasks();
         input.value = '';
+        document.getElementById('dueDateInput').value = '';
+        document.getElementById('priorityInput').value = 'Medium';
       }
     }
 
@@ -61,6 +147,12 @@
       const newText = prompt('Edit your task:', tasks[index].text);
       if (newText !== null) {
         tasks[index].text = newText;
+        // Edit due date
+        const newDue = prompt('Edit due date (YYYY-MM-DD):', tasks[index].dueDate || '');
+        if (newDue !== null) tasks[index].dueDate = newDue;
+        // Edit priority
+        const newPrio = prompt('Edit priority (Low, Medium, High):', tasks[index].priority || 'Medium');
+        if (newPrio !== null) tasks[index].priority = newPrio;
         saveTasks();
         renderTasks();
       }
@@ -78,6 +170,12 @@
       renderTasks();
     }
 
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      renderTasks();
+    }
+
     renderTasks();
-  </script></body>
+  </script>
+</body>
 </html>
