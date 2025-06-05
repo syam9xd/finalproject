@@ -18,6 +18,8 @@
         <option value="Medium" selected>Medium</option>
         <option value="High">High</option>
       </select>
+      <input type="file" id="photoInput" accept="image/*" />
+      <textarea id="noteInput" placeholder="Add a note..." rows="1" style="resize:vertical;"></textarea>
       <button class="add" onclick="addTask()">Add Task</button>
     </div>
     <div class="filters">
@@ -38,6 +40,14 @@
       <input type="date" id="dateFilter" onchange="renderTasks()" />
     </div>
     <div id="taskList"></div>
+    <div class="calendar-container">
+      <h2>Calendar</h2>
+      <div class="calendar-controls" style="margin-bottom:10px;">
+        <select id="calendarMonth"></select>
+        <select id="calendarYear"></select>
+      </div>
+      <div id="calendar"></div>
+    </div>
   </div>
   <script>
     let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
@@ -57,6 +67,101 @@
         <span style="color:#ff9800;font-weight:500;">Active:</span> ${pending}
         <span style="color:#b52a37;font-weight:500;">Completed:</span> ${completed}
       `;
+    }
+
+    let calendarMonth = new Date().getMonth();
+let calendarYear = new Date().getFullYear();
+
+    function renderCalendar() {
+      const calendar = document.getElementById('calendar');
+      if (!calendar) return;
+      calendar.innerHTML = '';
+
+      // Controls
+      const monthSelect = document.getElementById('calendarMonth');
+      const yearSelect = document.getElementById('calendarYear');
+
+      // Populate month select
+      const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+      if (monthSelect.options.length === 0) {
+        monthNames.forEach((name, idx) => {
+          const opt = document.createElement('option');
+          opt.value = idx;
+          opt.textContent = name;
+          monthSelect.appendChild(opt);
+        });
+      }
+      monthSelect.value = calendarMonth;
+
+      // Populate year select
+      if (yearSelect.options.length === 0) {
+        for (let y = 2025; y <= 2040; y++) {
+          const opt = document.createElement('option');
+          opt.value = y;
+          opt.textContent = y;
+          yearSelect.appendChild(opt);
+        }
+      }
+      yearSelect.value = calendarYear;
+
+      // Event listeners
+      monthSelect.onchange = function() {
+        calendarMonth = parseInt(this.value);
+        renderCalendar();
+      };
+      yearSelect.onchange = function() {
+        calendarYear = parseInt(this.value);
+        renderCalendar();
+      };
+
+      // First and last day of selected month/year
+      const firstDay = new Date(calendarYear, calendarMonth, 1);
+      const lastDay = new Date(calendarYear, calendarMonth + 1, 0);
+      const startDay = firstDay.getDay();
+
+      // Add blank days for the first week
+      for (let i = 0; i < startDay; i++) {
+        const blank = document.createElement('div');
+        blank.className = 'calendar-day';
+        calendar.appendChild(blank);
+      }
+
+      // Add days of the month
+      for (let d = 1; d <= lastDay.getDate(); d++) {
+        const dateStr = `${calendarYear}-${String(calendarMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'calendar-day';
+
+        // Check if any task is due on this day
+        const hasTask = tasks.some(task => task.dueDate === dateStr);
+        if (hasTask) {
+          dayDiv.classList.add('has-task');
+          const dot = document.createElement('span');
+          dot.className = 'task-dot';
+          dayDiv.appendChild(dot);
+        }
+
+        // Day number
+        const dayNum = document.createElement('span');
+        dayNum.className = 'day-number';
+        dayNum.textContent = d;
+        dayDiv.appendChild(dayNum);
+
+        // Show tasks for this day on click
+        dayDiv.onclick = function() {
+          const dayTasks = tasks.filter(task => task.dueDate === dateStr);
+          if (dayTasks.length > 0) {
+            alert('Tasks for ' + dateStr + ':\n' + dayTasks.map(t => '- ' + t.text).join('\n'));
+          } else {
+            alert('No tasks for ' + dateStr);
+          }
+        };
+
+        calendar.appendChild(dayDiv);
+      }
     }
 
     function renderTasks() {
@@ -110,6 +215,29 @@
         prio.textContent = ' | Priority: ' + (task.priority || 'Medium');
         taskDiv.appendChild(prio);
 
+        // Note and Photo section
+        if (task.note || task.photo) {
+          const notePhotoDiv = document.createElement('div');
+          notePhotoDiv.className = 'task-photo-container';
+
+          if (task.photo) {
+            const img = document.createElement('img');
+            img.src = task.photo;
+            img.alt = 'Task Photo';
+            img.className = 'task-photo';
+            notePhotoDiv.appendChild(img);
+          }
+
+          if (task.note) {
+            const note = document.createElement('div');
+            note.className = 'task-note';
+            note.textContent = 'Note: ' + task.note;
+            notePhotoDiv.appendChild(note);
+          }
+
+          taskDiv.appendChild(notePhotoDiv);
+        }
+
         // Edit button
         const editBtn = document.createElement('button');
         editBtn.textContent = 'Edit';
@@ -126,20 +254,44 @@
 
         taskList.appendChild(taskDiv);
       });
+
+      renderCalendar();
     }
 
     function addTask() {
       const input = document.getElementById('taskInput');
       const dueDate = document.getElementById('dueDateInput').value;
       const priority = document.getElementById('priorityInput').value;
+      const note = document.getElementById('noteInput').value;
+      const photoInput = document.getElementById('photoInput');
       const text = input.value.trim();
+
       if (text !== '') {
-        tasks.push({ text, completed: false, dueDate, priority });
-        saveTasks();
-        renderTasks();
+        if (photoInput.files && photoInput.files[0]) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            tasks.push({
+              text,
+              completed: false,
+              dueDate,
+              priority,
+              note,
+              photo: e.target.result
+            });
+            saveTasks();
+            renderTasks();
+          };
+          reader.readAsDataURL(photoInput.files[0]);
+        } else {
+          tasks.push({ text, completed: false, dueDate, priority, note, photo: null });
+          saveTasks();
+          renderTasks();
+        }
         input.value = '';
         document.getElementById('dueDateInput').value = '';
         document.getElementById('priorityInput').value = 'Medium';
+        document.getElementById('noteInput').value = '';
+        photoInput.value = '';
       }
     }
 
