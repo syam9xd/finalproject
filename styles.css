@@ -276,6 +276,7 @@ body {
   background: #fff;
   border-radius: 18px;
   box-shadow: 0 4px 32px rgba(75,46,92,0.10);
+  
 }
 
 h1 {
@@ -352,4 +353,140 @@ button, input, select, textarea {
 .calendar-day {
   min-height: 70px;
   font-size: 1.1em;
+}
+
+.calendar-day.calendar-completed {
+  background: #b6f5c6 !important;
+  border: 2px solid #28a745 !important;
+}
+.calendar-day.calendar-pending {
+  background: #fff6b0 !important;
+  border: 2px solid #ff9800 !important;
+}
+
+/* Auth Section Styling */
+#authSection {
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(120deg, #66af87 0%, #b888d8 100%);
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 1000;
+}
+
+.auth-container {
+  background: #fff;
+  padding: 38px 32px 28px 32px;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+  min-width: 320px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#loginForm, #registerForm {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#loginForm h2, #registerForm h2 {
+  color: #4b2e5c;
+  margin-bottom: 18px;
+  font-size: 2em;
+  letter-spacing: 1px;
+}
+
+#loginForm input, #registerForm input {
+  width: 90%;
+  padding: 12px 10px;
+  margin-bottom: 14px;
+  border-radius: 7px;
+  border: 1.5px solid #b888d8;
+  font-size: 1em;
+  background: #f7f3fa;
+  transition: border 0.2s;
+}
+
+#loginForm input:focus, #registerForm input:focus {
+  border: 1.5px solid #66af87;
+  outline: none;
+}
+
+.auth-btn {
+  width: 95%;
+  padding: 12px 0;
+  background: linear-gradient(90deg, #66af87 60%, #b888d8 100%);
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 7px;
+  font-size: 1.1em;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.auth-btn:hover {
+  background: linear-gradient(90deg, #4b2e5c 60%, #b888d8 100%);
+}
+
+.auth-switch {
+  font-size: 1em;
+  color: #4b2e5c;
+  margin-top: 10px;
+}
+
+.auth-switch a {
+  color: #b52a37;
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.logo-emoji {
+  font-size: 2.1em;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #7d5fa7;
+  font-size: 1.15em;
+  margin-bottom: 22px;
+  margin-top: -10px;
+  letter-spacing: 0.5px;
+}
+
+.auth-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.auth-header .logo-emoji {
+  font-size: 2.2em;
+  margin-bottom: 2px;
+}
+
+.auth-header h2 {
+  margin: 0 0 6px 0;
+  font-size: 2em;
+  color: #4b2e5c;
+  letter-spacing: 1px;
+}
+
+.auth-desc {
+  color: #7d5fa7;
+  font-size: 1.08em;
+  text-align: center;
+  margin-bottom: 8px;
 }
